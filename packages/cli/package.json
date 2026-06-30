@@ -1,0 +1,35 @@
+{
+  "name": "@seo-engine/cli",
+  "version": "0.1.0",
+  "description": "CLI for SEO audits and validation in CI",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "seo-engine": "./dist/bin.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts"
+  },
+  "dependencies": {
+    "@seo-engine/core": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5",
+    "vitest": "^4.0.18"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@seo-engine/adapters-next",
+  "version": "0.1.0",
+  "description": "Next.js App Router adapters for @seo-engine/core",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0"
+  },
+  "dependencies": {
+    "@seo-engine/core": "0.1.0"
+  },
+  "devDependencies": {
+    "next": "^16.1.6",
+    "typescript": "^5",
+    "vitest": "^4.0.18"
+  }
+}
