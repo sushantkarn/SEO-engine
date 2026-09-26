@@ -3,6 +3,19 @@
   "version": "0.1.0",
   "description": "Framework-agnostic SEO engine — metadata, schema, sitemap helpers, robots.txt, llms.txt, and content analysis",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushantkarn/SEO-engine.git",
+    "directory": "packages/seo-engine"
+  },
+  "homepage": "https://github.com/sushantkarn/SEO-engine#readme",
+  "bugs": {
+    "url": "https://github.com/sushantkarn/SEO-engine/issues"
+  },
+  "keywords": ["seo", "nextjs", "metadata", "json-ld", "robots-txt", "sitemap", "llms-txt", "mcp"],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

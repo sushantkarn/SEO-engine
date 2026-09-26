@@ -3,6 +3,19 @@
   "version": "0.1.0",
   "description": "Next.js App Router adapters for @seo-engine/core",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushantkarn/SEO-engine.git",
+    "directory": "packages/adapters-next"
+  },
+  "homepage": "https://github.com/sushantkarn/SEO-engine#readme",
+  "bugs": {
+    "url": "https://github.com/sushantkarn/SEO-engine/issues"
+  },
+  "keywords": ["seo", "nextjs", "next", "app-router", "metadata"],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -3,6 +3,19 @@
   "version": "0.1.0",
   "description": "CLI for SEO audits and validation in CI",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sushantkarn/SEO-engine.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/sushantkarn/SEO-engine#readme",
+  "bugs": {
+    "url": "https://github.com/sushantkarn/SEO-engine/issues"
+  },
+  "keywords": ["seo", "cli", "audit", "ci"],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "seo-engine": "./dist/bin.js"

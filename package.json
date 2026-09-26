@@ -9,7 +9,8 @@
   "scripts": {
     "build": "npm run build -w @seo-engine/core && npm run build -w @seo-engine/adapters-next && npm run build -w @seo-engine/cli",
     "test": "npm run test -w @seo-engine/core && npm run test -w @seo-engine/adapters-next && npm run test -w @seo-engine/cli",
-    "test:coverage": "npm run test:coverage -w @seo-engine/core"
+    "test:coverage": "npm run test:coverage -w @seo-engine/core",
+    "check:publish": "npm run build && npm test && npm pack --dry-run -w @seo-engine/core && npm pack --dry-run -w @seo-engine/adapters-next && npm pack --dry-run -w @seo-engine/cli"
   },
   "repository": {
     "type": "git",

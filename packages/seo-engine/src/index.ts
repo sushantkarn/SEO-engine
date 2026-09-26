@@ -12,6 +12,25 @@ export type {
 } from "./types.js";
 
 export {
+  SEO_ENGINE_CAPABILITIES,
+  getSeoCapability,
+} from "./capabilities.js";
+export type {
+  SeoCapability,
+  SeoCapabilityId,
+  SeoCapabilityStatus,
+} from "./capabilities.js";
+export { createSeoSiteManifest } from "./manifest.js";
+export type {
+  CreateSeoSiteManifestInput,
+  SeoExecutionMode,
+  SeoFramework,
+  SeoSiteManifest,
+} from "./manifest.js";
+export { validateSeoChange } from "./changes.js";
+export type { SeoChange, SeoChangeValidation } from "./changes.js";
+
+export {
   extractJsonLdPayload,
   normalizeJsonLd,
   normalizeSeoSchemaValue,

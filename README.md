@@ -34,6 +34,29 @@ npm run build
 npm test
 ```
 
+## Publishing
+
+Releases are published to npm by the `Publish packages` workflow. Before creating a release,
+update all package versions together, run the local checks, and commit the version changes:
+
+```bash
+npm run check:publish
+git tag v0.1.1
+git push origin main --follow-tags
+```
+
+The workflow expects an `NPM_TOKEN` repository secret with permission to publish these packages.
+It only publishes for `v*` tags and uses npm provenance. Never commit an npm token or a local
+`.npmrc` containing credentials.
+
+Consumers can install the stable packages directly from npm:
+
+```bash
+npm install @seo-engine/core
+npm install @seo-engine/adapters-next
+npm install --save-dev @seo-engine/cli
+```
+
 ## Documentation
 
 - [CONTRIBUTING.md](./CONTRIBUTING.md)

@@ -6,10 +6,12 @@ import {
   buildLocalSeoSchemaJsonLd,
   calculateSeoScore,
   countLinksInHtml,
+  createSeoSiteManifest,
   extractJsonLdPayload,
   generateLlmsTxt,
   generateRobots,
   getSeparator,
+  getSeoCapability,
   getSeoUrlVariants,
   getSitemapMaxItems,
   isLlmsTxtEnabled,
@@ -25,7 +27,58 @@ import {
   replaceVariables,
   resolveMetadata,
   serializeJsonLd,
+  SEO_ENGINE_CAPABILITIES,
+  validateSeoChange,
 } from "./index.js";
+
+describe("decision engine contracts", () => {
+  it("exposes the capability registry", () => {
+    expect(SEO_ENGINE_CAPABILITIES.length).toBeGreaterThan(10);
+    expect(getSeoCapability("mcp-bridge")?.status).toBe("planned");
+  });
+
+  it("creates a normalized site manifest", () => {
+    const manifest = createSeoSiteManifest({
+      siteId: "site-1",
+      baseUrl: "https://example.com/marketing/?utm_source=test",
+      framework: "next",
+      packageVersion: "0.1.0",
+      capabilities: ["metadata", "metadata"],
+      contentTypes: ["article", "article"],
+      now: new Date("2026-01-01T00:00:00.000Z"),
+    });
+
+    expect(manifest.baseUrl).toBe("https://example.com/marketing");
+    expect(manifest.capabilities).toEqual(["metadata"]);
+    expect(manifest.contentTypes).toEqual(["article"]);
+    expect(manifest.generatedAt).toBe("2026-01-01T00:00:00.000Z");
+  });
+
+  it("validates safe MCP changes", () => {
+    expect(
+      validateSeoChange({
+        type: "UPDATE_PAGE_METADATA",
+        route: "/about",
+        changes: { title: "About our company" },
+      }).valid,
+    ).toBe(true);
+    expect(
+      validateSeoChange({
+        type: "CREATE_REDIRECT",
+        from: "/old",
+        to: "/new",
+      }),
+    ).toMatchObject({ valid: true, normalized: { statusCode: 301 } });
+    expect(
+      validateSeoChange({
+        type: "ADD_INTERNAL_LINK",
+        source: "/about",
+        target: "/about",
+        anchor: "About",
+      }).valid,
+    ).toBe(false);
+  });
+});
 
 describe("settings", () => {
   it("merges settings without dropping nested config", () => {
