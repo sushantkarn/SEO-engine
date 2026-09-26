@@ -1,4 +1,4 @@
-# @seo-engine
+# @gmbranker SEO Engine
 
 Open-source, framework-agnostic SEO engine for JavaScript apps — metadata, JSON-LD, robots.txt, llms.txt, redirects, and CI audits.
 
@@ -8,14 +8,14 @@ Originally extracted from the [GMB Ranker](https://github.com/gmb-ranker/gmbrank
 
 | Package | Description |
 |---------|-------------|
-| [`@seo-engine/core`](./packages/seo-engine) | Pure SEO logic — zero framework dependencies |
-| [`@seo-engine/adapters-next`](./packages/adapters-next) | Next.js App Router route factories |
-| [`@seo-engine/cli`](./packages/cli) | `npx seo-engine audit` for CI pipelines |
+| [`@gmbranker/seo-engine-core`](./packages/seo-engine) | Pure SEO logic — zero framework dependencies |
+| [`@gmbranker/seo-engine-adapters-next`](./packages/adapters-next) | Next.js App Router route factories |
+| [`@gmbranker/seo-engine-cli`](./packages/cli) | `npx seo-engine audit` for CI pipelines |
 
 ## Install
 
 ```bash
-npm install @seo-engine/core
+npm install @gmbranker/seo-engine-core
 ```
 
 ```typescript
@@ -23,7 +23,7 @@ import {
   generateRobots,
   resolveMetadata,
   buildGlobalSchemaJsonLd,
-} from "@seo-engine/core";
+} from "@gmbranker/seo-engine-core";
 ```
 
 ## Development
@@ -41,7 +41,7 @@ update all package versions together, run the local checks, and commit the versi
 
 ```bash
 npm run check:publish
-git tag v0.1.1
+git tag v0.2.0
 git push origin main --follow-tags
 ```
 
@@ -52,9 +52,9 @@ It only publishes for `v*` tags and uses npm provenance. Never commit an npm tok
 Consumers can install the stable packages directly from npm:
 
 ```bash
-npm install @seo-engine/core
-npm install @seo-engine/adapters-next
-npm install --save-dev @seo-engine/cli
+npm install @gmbranker/seo-engine-core
+npm install @gmbranker/seo-engine-adapters-next
+npm install --save-dev @gmbranker/seo-engine-cli
 ```
 
 ## Documentation

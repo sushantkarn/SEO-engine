@@ -9,7 +9,7 @@ async function main() {
     console.log(`seo-engine — SEO audit CLI
 
 Usage:
-  seo-engine audit --url <url> [--rules title,description,schema]
+  seo-engine audit --url <url> [--rules title,description,canonical,schema,robots,social,hreflang,viewport,robots-ai,llms]
 
 Examples:
   npx seo-engine audit --url https://example.com

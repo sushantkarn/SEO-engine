@@ -1,6 +1,6 @@
 # Storage adapter interfaces
 
-`@seo-engine/core` separates **pure SEO logic** from **persistence**. Applications provide storage adapters; the core never imports Prisma, Redis, or CMS SDKs.
+`@gmbranker/seo-engine-core` separates **pure SEO logic** from **persistence**. Applications provide storage adapters; the core never imports Prisma, Redis, or CMS SDKs.
 
 ## Import
 
@@ -12,7 +12,7 @@ import type {
   RobotsStore,
   SitemapProvider,
   SeoStorageAdapters,
-} from "@seo-engine/core/storage";
+} from "@gmbranker/seo-engine-core/storage";
 ```
 
 ## SettingsStore
@@ -71,8 +71,8 @@ Returns dynamic URLs merged with static routes in framework adapters.
 ## Example (in-memory)
 
 ```typescript
-import { matchRedirect } from "@seo-engine/core";
-import type { RedirectStore } from "@seo-engine/core/storage";
+import { matchRedirect } from "@gmbranker/seo-engine-core";
+import type { RedirectStore } from "@gmbranker/seo-engine-core/storage";
 
 const memoryRedirects: RedirectRule[] = [];
 
@@ -83,4 +83,4 @@ const redirectStore: RedirectStore = {
 
 ## GMB Ranker reference
 
-GMB Ranker implements these via Prisma in `lib/franker/*` while consuming `@seo-engine/core` for algorithms.
+GMB Ranker implements these via Prisma in `lib/franker/*` while consuming `@gmbranker/seo-engine-core` for algorithms.

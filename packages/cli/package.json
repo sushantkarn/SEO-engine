@@ -1,6 +1,6 @@
 {
-  "name": "@seo-engine/cli",
-  "version": "0.1.0",
+  "name": "@gmbranker/seo-engine-cli",
+  "version": "0.2.8",
   "description": "CLI for SEO audits and validation in CI",
   "license": "MIT",
   "repository": {
@@ -12,13 +12,18 @@
   "bugs": {
     "url": "https://github.com/sushantkarn/SEO-engine/issues"
   },
-  "keywords": ["seo", "cli", "audit", "ci"],
+  "keywords": [
+    "seo",
+    "cli",
+    "audit",
+    "ci"
+  ],
   "publishConfig": {
     "access": "public"
   },
   "type": "module",
   "bin": {
-    "seo-engine": "./dist/bin.js"
+    "seo-engine-cli": "dist/bin.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -38,7 +43,7 @@
     "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
-    "@seo-engine/core": "0.1.0"
+    "@gmbranker/seo-engine-core": "0.2.6"
   },
   "devDependencies": {
     "@types/node": "^22",

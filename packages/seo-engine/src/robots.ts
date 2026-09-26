@@ -1,12 +1,5 @@
 export const DEFAULT_ROBOTS_TEMPLATE = `User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /admin/
-Disallow: /dashboard/
-Disallow: /settings/
-Disallow: /auth/
-Disallow: /_next/
-Disallow: /private/
 
 Sitemap: {{sitemap}}
 `;
@@ -14,11 +7,21 @@ Sitemap: {{sitemap}}
 export interface RobotsConfig {
   content?: string | null;
   sitemapUrl: string;
+  /** Optional application-owned paths. Nothing is blocked by default. */
+  disallow?: string[];
 }
 
 export function generateRobots(config: RobotsConfig): string {
   const template = config.content?.trim() || DEFAULT_ROBOTS_TEMPLATE;
-  return template.replace(/\{\{sitemap\}\}/g, config.sitemapUrl);
+  const content = template.replace(/\{\{sitemap\}\}/g, config.sitemapUrl);
+  const disallow = (config.disallow ?? [])
+    .map((path) => path.trim())
+    .filter(Boolean)
+    .map((path) => `Disallow: ${path}`)
+    .join("\n");
+
+  if (!disallow || config.content?.trim()) return content;
+  return content.replace("Allow: /\n", `Allow: /\n${disallow}\n`);
 }
 
 export const AI_CRAWLER_PRESETS = {

@@ -1,4 +1,4 @@
-# Contributing to @seo-engine
+# Contributing to @gmbranker SEO Engine
 
 Thank you for contributing to the open-source SEO engine monorepo.
 
@@ -6,9 +6,9 @@ Thank you for contributing to the open-source SEO engine monorepo.
 
 | Package | Purpose |
 |---------|---------|
-| `@seo-engine/core` | Framework-agnostic SEO logic |
-| `@seo-engine/adapters-next` | Next.js App Router route factories |
-| `@seo-engine/cli` | CI audit CLI |
+| `@gmbranker/seo-engine-core` | Framework-agnostic SEO logic |
+| `@gmbranker/seo-engine-adapters-next` | Next.js App Router route factories |
+| `@gmbranker/seo-engine-cli` | CI audit CLI |
 
 ## Development
 
@@ -27,7 +27,7 @@ npm test
 
 ## Storage adapters
 
-Implement interfaces from `@seo-engine/core/storage`:
+Implement interfaces from `@gmbranker/seo-engine-core/storage`:
 
 - `SettingsStore` — site-wide SEO settings JSON
 - `MetadataStore` — per-URL custom SEO overrides

@@ -1,20 +1,27 @@
 {
   "name": "seo-engine-monorepo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Open-source @seo-engine — framework-agnostic SEO for JavaScript apps",
+  "description": "Open-source @gmbranker SEO engine — framework-agnostic SEO for JavaScript apps",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w @seo-engine/core && npm run build -w @seo-engine/adapters-next && npm run build -w @seo-engine/cli",
-    "test": "npm run test -w @seo-engine/core && npm run test -w @seo-engine/adapters-next && npm run test -w @seo-engine/cli",
-    "test:coverage": "npm run test:coverage -w @seo-engine/core",
-    "check:publish": "npm run build && npm test && npm pack --dry-run -w @seo-engine/core && npm pack --dry-run -w @seo-engine/adapters-next && npm pack --dry-run -w @seo-engine/cli"
+    "build": "npm run build -w @gmbranker/seo-engine-core && npm run build -w @gmbranker/seo-engine-adapters-next && npm run build -w @gmbranker/seo-engine-adapters-nuxt && npm run build -w @gmbranker/seo-engine-adapters-astro && npm run build -w @gmbranker/seo-engine-cli",
+    "test": "npm run test -w @gmbranker/seo-engine-core && npm run test -w @gmbranker/seo-engine-adapters-next && npm run test -w @gmbranker/seo-engine-adapters-nuxt && npm run test -w @gmbranker/seo-engine-adapters-astro && npm run test -w @gmbranker/seo-engine-cli",
+    "test:coverage": "npm run test:coverage -w @gmbranker/seo-engine-core",
+    "check:publish": "npm run build && npm test && npm pack --dry-run -w @gmbranker/seo-engine-core && npm pack --dry-run -w @gmbranker/seo-engine-adapters-next && npm pack --dry-run -w @gmbranker/seo-engine-adapters-nuxt && npm pack --dry-run -w @gmbranker/seo-engine-adapters-astro && npm pack --dry-run -w @gmbranker/seo-engine-cli"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sushantkarn/SEO-engine.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.2"
+  },
+  "dependencies": {
+    "@gmbranker/seo-engine-adapters-next": "^0.2.5",
+    "@gmbranker/seo-engine-core": "^0.2.5"
+  }
 }

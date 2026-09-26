@@ -6,6 +6,15 @@ function asRecord(value: unknown): Record<string, unknown> | null {
     : null;
 }
 
+function stringArray(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const values = value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return values.length > 0 ? values : undefined;
+}
+
 export function buildGlobalSchemaJsonLd(
   settings: SettingsRecord,
   baseUrl: string,
@@ -23,22 +32,32 @@ export function buildGlobalSchemaJsonLd(
       ? schema.logoUrl
       : undefined;
 
-  if (schemaType === "Person") {
-    return {
+  const base = schemaType === "Person"
+    ? {
       "@context": "https://schema.org",
       "@type": "Person",
       name,
       url: baseUrl,
       ...(logoUrl ? { image: logoUrl } : {}),
-    };
-  }
+    }
+    : {
+        "@context": "https://schema.org",
+        "@type": schemaType,
+        name,
+        url: baseUrl,
+        ...(logoUrl ? { logo: logoUrl } : {}),
+      };
 
+  const sameAs = stringArray(schema.sameAs);
+  const telephone = typeof schema.telephone === "string" ? schema.telephone : undefined;
+  const email = typeof schema.email === "string" ? schema.email : undefined;
+  const contactPoint = asRecord(schema.contactPoint);
   return {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name,
-    url: baseUrl,
-    ...(logoUrl ? { logo: logoUrl } : {}),
+    ...base,
+    ...(sameAs ? { sameAs } : {}),
+    ...(telephone ? { telephone } : {}),
+    ...(email ? { email } : {}),
+    ...(contactPoint ? { contactPoint: { "@type": "ContactPoint", ...contactPoint } } : {}),
   };
 }
 
@@ -72,6 +91,15 @@ export function buildLocalSeoSchemaJsonLd(
     schema.email = localSeo.email;
   }
 
+  for (const field of ["telephone", "priceRange", "areaServed"] as const) {
+    if (typeof localSeo[field] === "string" && localSeo[field].length > 0) {
+      schema[field] = localSeo[field];
+    }
+  }
+
+  const sameAs = stringArray(localSeo.sameAs);
+  if (sameAs) schema.sameAs = sameAs;
+
   if (typeof localSeo.address === "string" && localSeo.address.length > 0) {
     schema.address = {
       "@type": "PostalAddress",
@@ -101,4 +129,23 @@ export function buildLocalSeoSchemaJsonLd(
   }
 
   return schema;
+}
+
+export function buildBreadcrumbSchemaJsonLd(
+  items: Array<{ name: string; url: string }>,
+): Record<string, unknown> | null {
+  const itemListElement = items
+    .filter((item) => item.name.trim() && /^https?:\/\//i.test(item.url))
+    .map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name.trim(),
+      item: item.url,
+    }));
+  if (itemListElement.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement,
+  };
 }

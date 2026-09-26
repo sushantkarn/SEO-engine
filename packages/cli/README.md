@@ -1,4 +1,4 @@
-# @seo-engine/cli
+# @gmbranker/seo-engine-cli
 
 CI-friendly SEO audit CLI.
 
@@ -7,6 +7,7 @@ CI-friendly SEO audit CLI.
 ```bash
 npx seo-engine audit --url https://example.com
 npx seo-engine audit --url https://example.com --rules title,description,schema,canonical
+npx seo-engine audit --url https://example.com --rules social,hreflang,robots-ai,llms
 ```
 
 ## License

@@ -1,4 +1,4 @@
-import { normalizeJsonLd } from "@seo-engine/core";
+import { normalizeJsonLd } from "@gmbranker/seo-engine-core";
 
 export type AuditRule =
   | "title"
@@ -7,7 +7,10 @@ export type AuditRule =
   | "schema"
   | "robots"
   | "robots-ai"
-  | "llms";
+  | "llms"
+  | "social"
+  | "hreflang"
+  | "viewport";
 
 export interface AuditFinding {
   rule: AuditRule;
@@ -25,11 +28,32 @@ export interface AuditOptions {
   url: string;
   rules?: AuditRule[];
   fetchHtml?: (url: string) => Promise<string>;
+  fetchText?: (url: string) => Promise<string>;
 }
 
 function extractTag(html: string, pattern: RegExp): string | null {
   const match = html.match(pattern);
   return match?.[1]?.trim() ?? null;
+}
+
+function extractAttribute(
+  html: string,
+  tagName: string,
+  attributes: Record<string, string>,
+): string | null {
+  const tagPattern = new RegExp(`<${tagName}\\b[^>]*>`, "gi");
+  for (const tag of html.matchAll(tagPattern)) {
+    const source = tag[0];
+    const matches = Object.entries(attributes).every(([name, value]) =>
+      new RegExp(`${name}\\s*=\\s*["']${value}["']`, "i").test(source),
+    );
+    if (matches) {
+      const content = source.match(/content\s*=\s*["']([^"']*)["']/i);
+      const href = source.match(/href\s*=\s*["']([^"']*)["']/i);
+      return (content?.[1] ?? href?.[1] ?? "").trim() || null;
+    }
+  }
+  return null;
 }
 
 function extractJsonLdBlocks(html: string): string[] {
@@ -63,6 +87,15 @@ export async function auditUrl(options: AuditOptions): Promise<AuditReport> {
       }
       return response.text();
     });
+  const fetchText =
+    options.fetchText ??
+    (async (url: string) => {
+      const response = await fetch(url, {
+        headers: { "User-Agent": "seo-engine-cli/0.2.5" },
+      });
+      if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.status}`);
+      return response.text();
+    });
 
   const html = await fetchHtml(options.url);
   const findings: AuditFinding[] = [];
@@ -77,10 +110,7 @@ export async function auditUrl(options: AuditOptions): Promise<AuditReport> {
   }
 
   if (rules.includes("description")) {
-    const description = extractTag(
-      html,
-      /<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["'][^>]*>/i,
-    );
+    const description = extractAttribute(html, "meta", { name: "description" });
     findings.push({
       rule: "description",
       status: description ? "pass" : "fail",
@@ -91,10 +121,7 @@ export async function auditUrl(options: AuditOptions): Promise<AuditReport> {
   }
 
   if (rules.includes("canonical")) {
-    const canonical = extractTag(
-      html,
-      /<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']*)["'][^>]*>/i,
-    );
+    const canonical = extractAttribute(html, "link", { rel: "canonical" });
     findings.push({
       rule: "canonical",
       status: canonical ? "pass" : "warning",
@@ -120,10 +147,7 @@ export async function auditUrl(options: AuditOptions): Promise<AuditReport> {
   }
 
   if (rules.includes("robots")) {
-    const robots = extractTag(
-      html,
-      /<meta[^>]*name=["']robots["'][^>]*content=["']([^"']*)["'][^>]*>/i,
-    );
+    const robots = extractAttribute(html, "meta", { name: "robots" });
     findings.push({
       rule: "robots",
       status: robots ? "pass" : "warning",
@@ -132,20 +156,65 @@ export async function auditUrl(options: AuditOptions): Promise<AuditReport> {
   }
 
   if (rules.includes("robots-ai")) {
+    const robotsUrl = new URL("/robots.txt", options.url).toString();
+    let robotsText = "";
+    try {
+      robotsText = await fetchText(robotsUrl);
+    } catch {
+      // A missing robots.txt is reported as a warning, not a CLI crash.
+    }
+    const hasAiPolicy = /User-agent:\s*(GPTBot|OAI-SearchBot|ClaudeBot|PerplexityBot)/i.test(robotsText);
     findings.push({
       rule: "robots-ai",
-      status: "warning",
-      message:
-        "AI crawler policy audit requires fetching /robots.txt (use audit --rules robots-ai with extended fetch in CI)",
+      status: hasAiPolicy ? "pass" : "warning",
+      message: hasAiPolicy
+        ? "AI crawler policy found in robots.txt"
+        : "No explicit AI crawler policy found in robots.txt",
     });
   }
 
   if (rules.includes("llms")) {
+    const llmsUrl = new URL("/llms.txt", options.url).toString();
+    let llmsText = "";
+    try {
+      llmsText = await fetchText(llmsUrl);
+    } catch {
+      // A missing llms.txt is reported as a warning, not a CLI crash.
+    }
     findings.push({
       rule: "llms",
-      status: "warning",
-      message:
-        "llms.txt audit requires fetching /llms.txt (configure in CI pipeline)",
+      status: llmsText.trim() ? "pass" : "warning",
+      message: llmsText.trim() ? "llms.txt is available" : "llms.txt is empty",
+    });
+  }
+
+  if (rules.includes("social")) {
+    const ogTitle = extractAttribute(html, "meta", { property: "og:title" });
+    const twitterCard = extractAttribute(html, "meta", { name: "twitter:card" });
+    findings.push({
+      rule: "social",
+      status: ogTitle && twitterCard ? "pass" : "warning",
+      message: ogTitle && twitterCard
+        ? "Open Graph and Twitter metadata present"
+        : "Open Graph title or Twitter card metadata is missing",
+    });
+  }
+
+  if (rules.includes("hreflang")) {
+    const links = [...html.matchAll(/<link\\b[^>]*rel=["']alternate["'][^>]*hreflang=["'][^"']+["'][^>]*>/gi)];
+    findings.push({
+      rule: "hreflang",
+      status: links.length > 0 ? "pass" : "warning",
+      message: links.length > 0 ? `${links.length} hreflang link(s) found` : "No hreflang links found",
+    });
+  }
+
+  if (rules.includes("viewport")) {
+    const viewport = extractAttribute(html, "meta", { name: "viewport" });
+    findings.push({
+      rule: "viewport",
+      status: viewport ? "pass" : "warning",
+      message: viewport ? "Viewport metadata present" : "Viewport metadata is missing",
     });
   }
 

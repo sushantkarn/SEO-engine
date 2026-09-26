@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  createNextMetadata,
   createLlmsRoute,
   createRobotsRoute,
   createSitemapHandler,
@@ -64,6 +65,25 @@ describe("createSitemapHandler", () => {
 
     expect(await handler()).toEqual([]);
   });
+
+  it("deduplicates, normalizes, and limits sitemap entries", async () => {
+    const handler = createSitemapHandler({
+      maxItems: 2,
+      getStaticEntries: () => [
+        { url: "https://example.com/about/" },
+        { url: "https://example.com/about" },
+      ],
+      getDynamicEntries: () => [
+        { url: "https://example.com/blog#top" },
+        { url: "not a url" },
+      ],
+    });
+
+    expect(await handler()).toEqual([
+      { url: "https://example.com/about" },
+      { url: "https://example.com/blog" },
+    ]);
+  });
 });
 
 describe("toNextMetadata", () => {
@@ -71,5 +91,32 @@ describe("toNextMetadata", () => {
     expect(createRobotsRoute).toBeTypeOf("function");
     expect(createLlmsRoute).toBeTypeOf("function");
     expect(createSitemapHandler).toBeTypeOf("function");
+  });
+
+  it("maps the core contract to Next metadata", () => {
+    const metadata = createNextMetadata({
+      seo: {
+        title: "Admissions",
+        description: "Medical admissions",
+        keywords: "mbbs, admissions",
+        robots: "noindex,nofollow",
+        maxSnippet: 100,
+        twitterCard: "summary",
+      },
+      context: {
+        title: "Admissions",
+        url: "https://example.com/admissions",
+      },
+      config: { siteName: "Example", separator: "|" },
+    });
+
+    expect(metadata.title).toBe("Admissions");
+    expect(metadata.keywords).toEqual(["mbbs", "admissions"]);
+    expect(metadata.robots).toMatchObject({
+      index: false,
+      follow: false,
+      maxSnippet: 100,
+    });
+    expect(metadata.twitter).toMatchObject({ card: "summary" });
   });
 });

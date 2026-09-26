@@ -1,8 +1,13 @@
 import {
   generateLlmsTxt,
   generateRobots,
+  resolveMetadata,
+  type MetadataConfig,
+  type PageContext,
+  type ResolvedMetadata,
+  type SeoData,
   type SettingsRecord,
-} from "@seo-engine/core";
+} from "@gmbranker/seo-engine-core";
 
 export interface LlmsRouteOptions {
   baseUrl: string;
@@ -80,6 +85,18 @@ export interface SitemapHandlerOptions {
   getStaticEntries: () => NextSitemapEntry[] | Promise<NextSitemapEntry[]>;
   getDynamicEntries?: () => NextSitemapEntry[] | Promise<NextSitemapEntry[]>;
   isEnabled?: () => boolean | Promise<boolean>;
+  maxItems?: number;
+}
+
+function normalizeSitemapUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    url.hash = "";
+    if (url.pathname !== "/") url.pathname = url.pathname.replace(/\/+$/, "");
+    return url.toString();
+  } catch {
+    return null;
+  }
 }
 
 export function createSitemapHandler(options: SitemapHandlerOptions) {
@@ -94,43 +111,65 @@ export function createSitemapHandler(options: SitemapHandlerOptions) {
       ? await options.getDynamicEntries()
       : [];
 
-    return [...staticEntries, ...dynamicEntries];
+    const seen = new Set<string>();
+    const entries = [...staticEntries, ...dynamicEntries].flatMap((entry) => {
+      const normalized = normalizeSitemapUrl(entry.url);
+      if (!normalized || seen.has(normalized)) return [];
+      seen.add(normalized);
+      return [{ ...entry, url: normalized }];
+    });
+
+    return options.maxItems && options.maxItems > 0
+      ? entries.slice(0, Math.floor(options.maxItems))
+      : entries;
   };
 }
 
-export function toNextMetadata(resolved: {
-  title: string;
-  description: string;
-  canonical: string;
-  robots: { index: boolean; follow: boolean };
-  openGraph: {
-    title: string;
-    description: string;
-    url: string;
-    siteName: string;
-    images?: { url: string }[];
-    type: string;
-  };
-  twitter: {
-    card: string;
-    title: string;
-    description: string;
-    images?: string[];
-  };
-}) {
+export function toNextMetadata(resolved: ResolvedMetadata) {
   return {
     title: resolved.title,
     description: resolved.description,
-    alternates: { canonical: resolved.canonical },
+    alternates: {
+      canonical: resolved.canonical,
+      ...(resolved.alternates && Object.keys(resolved.alternates).length > 0
+        ? { languages: resolved.alternates }
+        : {}),
+    },
     robots: {
       index: resolved.robots.index,
       follow: resolved.robots.follow,
+      noarchive: resolved.robots.noarchive,
+      noimageindex: resolved.robots.noimageindex,
+      nosnippet: resolved.robots.nosnippet,
+      maxSnippet: resolved.robots.maxSnippet,
+      maxImagePreview: resolved.robots.maxImagePreview,
+      maxVideoPreview: resolved.robots.maxVideoPreview,
       googleBot: {
         index: resolved.robots.index,
         follow: resolved.robots.follow,
+        noarchive: resolved.robots.noarchive,
+        noimageindex: resolved.robots.noimageindex,
+        nosnippet: resolved.robots.nosnippet,
+        maxSnippet: resolved.robots.maxSnippet,
+        maxImagePreview: resolved.robots.maxImagePreview,
+        maxVideoPreview: resolved.robots.maxVideoPreview,
       },
     },
+    keywords: resolved.keywords,
     openGraph: resolved.openGraph,
     twitter: resolved.twitter,
   };
+}
+
+export interface NextMetadataOptions {
+  seo?: SeoData | null;
+  context: PageContext;
+  config: MetadataConfig;
+}
+
+/** Resolves the package contract directly into a Next.js Metadata-compatible object. */
+export function createNextMetadata(options: NextMetadataOptions) {
+  return toNextMetadata(
+    resolveMetadata(options.seo ?? {}, options.context, options.config),
+  );
 }

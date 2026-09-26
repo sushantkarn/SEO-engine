@@ -38,7 +38,13 @@ export function generateLlmsTxt(
       : (options?.defaultSummary ??
         "This website provides tools and services for developers.");
 
-  const lines = [`# ${baseUrl.replace(/^https?:\/\//, "")}`, "", summary, ""];
+  const normalizedBaseUrl = baseUrl.replace(/\/+$/, "");
+  const lines = [
+    `# ${normalizedBaseUrl.replace(/^https?:\/\//, "")}`,
+    "",
+    summary,
+    "",
+  ];
 
   const importantLinks = Array.isArray(llms?.importantLinks)
     ? llms.importantLinks
@@ -61,6 +67,6 @@ export function generateLlmsTxt(
     lines.push("");
   }
 
-  lines.push(`Sitemap: ${baseUrl}/sitemap.xml`);
+  lines.push(`Sitemap: ${normalizedBaseUrl}/sitemap.xml`);
   return lines.join("\n");
 }

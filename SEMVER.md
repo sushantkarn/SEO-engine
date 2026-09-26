@@ -12,8 +12,8 @@
 
 | Tier | Packages | Guarantee |
 |------|----------|-----------|
-| Stable | `@seo-engine/core`, `@seo-engine/adapters-next`, `@seo-engine/cli` | Semver-compliant |
-| Experimental | future `@seo-engine/geo`, `@seo-engine/entity` | May ship `0.x` until APIs stabilize |
+| Stable | `@gmbranker/seo-engine-core`, `@gmbranker/seo-engine-adapters-next`, `@gmbranker/seo-engine-cli` | Semver-compliant |
+| Experimental | future `@gmbranker/seo-engine-geo`, `@gmbranker/seo-engine-entity` | May ship `0.x` until APIs stabilize |
 
 ## Deprecation process
 

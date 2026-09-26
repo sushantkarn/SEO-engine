@@ -1,6 +1,9 @@
 import type { LinkCounts } from "./types.js";
 
-export function countLinksInHtml(content: string, siteHost: string): LinkCounts {
+export function countLinksInHtml(
+  content: string,
+  siteHost: string,
+): LinkCounts {
   const hrefMatches = content.match(/href=["']([^"']+)["']/gi) || [];
   let internal = 0;
   let external = 0;

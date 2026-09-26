@@ -34,6 +34,23 @@ describe("auditUrl", () => {
 
     expect(report.passed).toBe(false);
   });
+
+  it("audits social, crawler, and llms endpoints", async () => {
+    const report = await auditUrl({
+      url: "https://example.com",
+      rules: ["social", "robots-ai", "llms"],
+      fetchHtml: async () =>
+        '<meta property="og:title" content="Example"><meta name="twitter:card" content="summary">',
+      fetchText: async (url) =>
+        url.endsWith("robots.txt")
+          ? "User-agent: GPTBot\nDisallow: /"
+          : "# Example site",
+    });
+
+    expect(report.findings.every((finding) => finding.status === "pass")).toBe(
+      true,
+    );
+  });
 });
 
 describe("formatAuditReport", () => {

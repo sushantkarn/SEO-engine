@@ -44,14 +44,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Publish core
-        run: npm publish -w @seo-engine/core --access public --provenance
+        run: npm publish -w @gmbranker/seo-engine-core --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish Next.js adapter
-        run: npm publish -w @seo-engine/adapters-next --access public --provenance
+        run: npm publish -w @gmbranker/seo-engine-adapters-next --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish CLI
-        run: npm publish -w @seo-engine/cli --access public --provenance
+        run: npm publish -w @gmbranker/seo-engine-cli --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

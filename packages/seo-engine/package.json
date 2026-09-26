@@ -1,7 +1,7 @@
 {
-  "name": "@seo-engine/core",
-  "version": "0.1.0",
-  "description": "Framework-agnostic SEO engine — metadata, schema, sitemap helpers, robots.txt, llms.txt, and content analysis",
+  "name": "@gmbranker/seo-engine-core",
+  "version": "0.2.6",
+  "description": "Framework-agnostic SEO engine — metadata, schema, audits, safe changes, MCP contracts, and content analysis",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -12,7 +12,16 @@
   "bugs": {
     "url": "https://github.com/sushantkarn/SEO-engine/issues"
   },
-  "keywords": ["seo", "nextjs", "metadata", "json-ld", "robots-txt", "sitemap", "llms-txt", "mcp"],
+  "keywords": [
+    "seo",
+    "nextjs",
+    "metadata",
+    "json-ld",
+    "robots-txt",
+    "sitemap",
+    "llms-txt",
+    "mcp"
+  ],
   "publishConfig": {
     "access": "public"
   },
